@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Pushman Development Client</title>
+        <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                 <a class="navbar-brand" href="#">DEV</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <p class="navbar-text navbar-right">Development client for testing <a class="navbar-link" href="http://pushman.dfl.mn">Pushman</a>.</p>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container" id="app">
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel" v-class="panel-success: connected, panel-danger: !connected">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Server</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Host</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="host" v-on="keyup: disconnect" placeholder="live.pushman.dfl.mn">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Port</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="port" v-on="keyup: disconnect" placeholder="8080">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Token</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="token" v-on="keyup: disconnect" placeholder="20 Character Public Token">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">User Data</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="userdata" v-on="keyup: disconnect" placeholder="foo=bar&baz=qux">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-5 col-sm-offset-2">
+                                        <a href="#" class="btn btn-block btn-success btn-xs" v-on="click: connect" v-attr="disabled: connected">Connect</a>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <a href="#" class="btn btn-block btn-danger btn-xs" v-on="click: disconnect" v-attr="disabled: !connected">Disconnect</a>
+                                    </div>
+                                </div>
+
+                            </form>
+                            
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Subscriptions</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" v-on="submit: addSubscription">
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Channel</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="channel" placeholder="public">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Token</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="channel_token" placeholder="20 Character Public Token">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">Event</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="event_name" placeholder="my_event_name">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-10 col-sm-offset-2">
+                                        <button type="submit" class="btn btn-xs btn-block btn-success">Subscribe</a>
+                                    </div>
+                                </div>
+                                
+                                <div id="subscriptions" v-if="subscribed">
+                                    <hr>
+                                    
+                                    <ol class="list-group">
+                                        <li class="list-group-item" 
+                                            v-repeat="subscription: subscriptions"
+                                        >
+                                            {{ subscription.channel + '.' + subscription.event_name }}
+
+                                            <a href="#" style="color:red;" v-on="click: removeSubscription(subscription)">
+                                                <span class="glyphicon glyphicon-remove pull-right"></span>
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Logs</h3>
+                        </div>
+                        <pre style="margin-bottom:0;border:0;">{{{ logs }}}</pre>
+                    </div>
+
+                    <div class="panel panel-info" v-if="juicyPayload">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Last Payload</h3>
+                        </div>
+                        <pre style="margin-bottom:0;border:0;">{{{ lastPayload | json }}}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue.JS -->
+        <script src="assets/js/vue.min.js"></script>
+        <script src="assets/js/autobahn.min.js"></script>
+        <script src="assets/js/app.js"></script>
+    </body>
+</html>

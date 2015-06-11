@@ -52,7 +52,7 @@ var vm = new Vue({
                 // On disconnect
                 function() {
                     self.pmLog('Disconnected from Host');
-                    self.connected = false;
+                    self.disconnect();
                 },
                 {'skipSubprotocolCheck': true}
             );
@@ -61,11 +61,9 @@ var vm = new Vue({
         disconnect: function()
         {
             var self = this;
-            if(self.connected) {
-                self.conn.close();
-                self.connected = false;
-                self.subscriptions = [];
-            }
+            self.conn.close();
+            self.connected = false;
+            self.subscriptions = [];
         },
 
         addSubscription: function(event) {

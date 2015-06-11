@@ -3,8 +3,7 @@ var vm = new Vue({
     el: "#app",
 
     ready: function() {
-        this.pmLog('Initialized Client');
-        this.channel_token = this.token;
+        this.getReady();
         // this.connect();
     },
 
@@ -41,6 +40,11 @@ var vm = new Vue({
     },
 
     methods: {
+        getReady: function() {
+            this.pmLog('Initialized Client');
+            this.channel_token = this.token;
+        },
+
         connect: function() {
             var self = this;
             self.conn = new ab.Session('ws://' + this.host + ':' + this.port + '?token=' + this.token + '&' + this.userdata,
@@ -147,6 +151,14 @@ var vm = new Vue({
             console.log(text);
             text = text + "<br>";
             self.logs = text.concat(self.logs);
+        },
+
+        clearLogs: function(event) {
+            event.preventDefault();
+            this.logs = '';
+            this.lastPayload = '';
+
+            this.getReady();
         },
 
         pad: function(str, len, pad, dir) {

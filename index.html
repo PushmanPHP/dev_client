@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Pushman Development Client</title>
         <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="assets/css/site.css">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -144,7 +145,7 @@
                 <div class="col-lg-6">
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">Logs</h3>
+                            <h3 class="panel-title">Logs <span class="pull-right"><a class="panel-link" href="#" v-on="click: clearLogs">Clear Logs</a></span></h3>
                         </div>
                         <pre style="margin-bottom:0;border:0;">{{{ logs }}}</pre>
                     </div>
